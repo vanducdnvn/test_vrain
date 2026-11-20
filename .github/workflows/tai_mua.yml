@@ -1,0 +1,35 @@
+name: Tai du lieu mua
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cai Selenium
+        run: pip install selenium
+
+      - name: Tai Excel
+        run: python tai_mua.py
+
+      - name: Luu file Excel
+        uses: actions/upload-artifact@v4
+        with:
+          name: du-lieu-mua-${{ github.run_id }}
+          path: DuLieuMua/*.xlsx
+          if-no-files-found: error
+          retention-days: 30
